@@ -10,35 +10,7 @@ public class GameMachine {
             new Game("Starcraft", 35)
     );
 
-    public List<Game> getGames() {
-        return games;
-    }
-
-    public void setGames(List<Game> games) {
-        this.games = games;
-    }
-
-    public Game getGame(String gameName) throws NoSuchGameException {
-        Optional<Game> foundGame = games.stream()
-                .filter(game -> game.getName().equals(gameName))
-                .findFirst();
-        if (foundGame.isEmpty()) {
-            throw new NoSuchGameException("There is no game with this title.");
-        }
-        return foundGame.get();
-    }
-
-    public double payForGame(double payment, Game game) throws NotEnoughtMoneyException {
-        if (game.getPrice() <= payment) {
-            return payment - game.getPrice();
-        }
-        throw new NotEnoughtMoneyException("Game costs " + game.getPrice() + " You ante only: " + payment);
-    }
-
-
-
-
-    public void buyGame(String gameName, double payment) throws NoSuchGameException, NotEnoughtMoneyException {
+    void buyGame(String gameName, double payment) throws NoSuchGameException, NotEnoughtMoneyException {
         Optional<Game> foundGame = games.stream()
                 .filter(game -> game.getName().equals(gameName))
                 .findFirst();
