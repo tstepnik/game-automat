@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class GameMachine {
 
@@ -17,19 +18,41 @@ public class GameMachine {
         this.games = games;
     }
 
-    public Game getGame(String gameName) throws NotSuchGameException {
-        for (Game game : games) {
-            if (game.getName().equals(gameName)) {
-                return game;
-            }
+    public Game getGame(String gameName) throws NoSuchGameException {
+        Optional<Game> foundGame = games.stream()
+                .filter(game -> game.getName().equals(gameName))
+                .findFirst();
+        if (foundGame.isEmpty()) {
+            throw new NoSuchGameException("There is no game with this title.");
         }
-        throw new NotSuchGameException("Podanej gry nie ma w magazynie");
+        return foundGame.get();
     }
 
-    public double paidForGame(double payment, Game game) throws NotEnoughtMoneyException {
+    public double payForGame(double payment, Game game) throws NotEnoughtMoneyException {
         if (game.getPrice() <= payment) {
             return payment - game.getPrice();
         }
-        throw new NotEnoughtMoneyException("Gra kosztuję " + game.getPrice() + " Ty wpłaciłeś tylko " + payment);
+        throw new NotEnoughtMoneyException("Game costs " + game.getPrice() + " You ante only: " + payment);
+    }
+
+
+
+
+    public void buyGame(String gameName, double payment) throws NoSuchGameException, NotEnoughtMoneyException {
+        Optional<Game> foundGame = games.stream()
+                .filter(game -> game.getName().equals(gameName))
+                .findFirst();
+        if (foundGame.isEmpty()) {
+            throw new NoSuchGameException("There is no game with this title.");
+
+        } else {
+            Game game = foundGame.get();
+            if (game.getPrice() <= payment) {
+                System.out.println("Collect game " + game.getName());
+                System.out.println("Collect the rest " + (payment-game.getPrice()));
+            } else {
+                throw new NotEnoughtMoneyException("Game costs " + game.getPrice() + " You ante only: " + payment);
+            }
+        }
     }
 }
