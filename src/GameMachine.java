@@ -10,21 +10,16 @@ public class GameMachine {
             new Game("Starcraft", 35)
     );
 
-    void buyGame(String gameName, double payment) throws NoSuchGameException, NotEnoughtMoneyException {
-        Optional<Game> foundGame = games.stream()
+    public void buyGame(String gameName, double payment) throws NoSuchGameException, NotEnoughtMoneyException {
+        Game foundGame = games.stream()
                 .filter(game -> game.getName().equals(gameName))
-                .findFirst();
-        if (foundGame.isEmpty()) {
-            throw new NoSuchGameException("There is no game with this title.");
-
+                .findFirst()
+                .orElseThrow(() -> new NoSuchGameException("There is no game with this title."));
+        if (foundGame.getPrice() <= payment) {
+            System.out.println("Collect game " + foundGame.getName());
+            System.out.println("Collect the rest " + (payment - foundGame.getPrice()));
         } else {
-            Game game = foundGame.get();
-            if (game.getPrice() <= payment) {
-                System.out.println("Collect game " + game.getName());
-                System.out.println("Collect the rest " + (payment-game.getPrice()));
-            } else {
-                throw new NotEnoughtMoneyException("Game costs " + game.getPrice() + " You ante only: " + payment);
-            }
+            throw new NotEnoughtMoneyException("Game costs " + foundGame.getPrice() + " You ante only: " + payment);
         }
     }
 }
